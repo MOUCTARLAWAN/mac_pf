@@ -18,6 +18,10 @@ const renderText = (text, className, baseWidth = 400) =>
     </span>
   ));
 
+  
+  
+
+
 const Welcome = () => {
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
@@ -31,6 +35,7 @@ const Welcome = () => {
       const { min, max, default: baseWeight } = FONT_WEIGHT[type];
 
       // map letter -> { proxy, tween }
+
       const registry = new Map();
 
       letters.forEach((letter) => {
@@ -41,6 +46,7 @@ const Welcome = () => {
         letter.style.fontVariationSettings = `"wght" ${baseWeight}`;
         letter.style.willChange = "font-variation-settings";
       });
+
 
       const handleMouseMove = (e) => {
         const rect = container.getBoundingClientRect();

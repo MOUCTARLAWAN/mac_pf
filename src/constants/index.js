@@ -73,5 +73,80 @@ const dockApps = [
     },
 ];
 
+const techStack = [
+      {
+        category: "Data Engineering",
+        items: ["Python", "SQL", "Spark", "Airflow", "Databricks","ADF"],
+      },
+      {
+        category: "Data Analysis",
+        items: ["Power BI", "Tableau", "SQL", "Python"],
+      },
+      {
+        category: "Data Visualization",
+        items: ["Power BI", "Tableau"],
+      },
+      {
+        category: "Big Data",
+        items: ["Hadoop", "Kafka"],
+      },
+      {
+        category: "Cloud",
+        items: ["Azure"],
+      },
+      {
+        category: "DevOps",
+      items: [ "GitHub",  "Docker", "Kubernetes",  "Terraform", "Ansible", "Jenkins", "Azure DevOps" ],
+    },
+  ];
 
-export { navLinks, navIcons, dockApps } ;
+export { navLinks, navIcons, dockApps, techStack } ;
+
+
+
+
+const INITIAL_Z_INDEX = 1000;
+const WINDOW_CONFIG = {
+    finder: {
+        isOpen: false,
+        zIndex: INITIAL_Z_INDEX,
+        data: null,
+    },
+    safari: {
+        isOpen: false,
+        zIndex: INITIAL_Z_INDEX,
+        data: null,
+    },
+    photos: {
+        isOpen: false,
+        zIndex: INITIAL_Z_INDEX,
+        data: null,
+    },
+    contact: {
+        isOpen: false,
+        zIndex: INITIAL_Z_INDEX,
+        data: null,
+    },
+    terminal: {
+        isOpen: false,
+        zIndex: INITIAL_Z_INDEX,
+        data: null,
+    },
+    imgfile: {
+        isOpen: false,
+        zIndex: INITIAL_Z_INDEX,
+        data: null,
+    },
+    resume: {
+        isOpen: false,
+        zIndex: INITIAL_Z_INDEX,
+        data: null,
+    },
+    txtfile: {
+        isOpen: false,
+        zIndex: INITIAL_Z_INDEX,
+        data: null,
+    },
+};
+export { INITIAL_Z_INDEX, WINDOW_CONFIG } ;
+
