@@ -3,8 +3,12 @@ import { dockApps } from "#constants/index.js";
 import { Tooltip } from "react-tooltip";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import useWindowStore from "#store/window.js";
+
+
 
 const Dock = () => {
+  const { openWindow, closeWindow, windows } = useWindowStore();
   const dockRef = useRef(null);
 
   useGSAP(() => {
@@ -21,7 +25,7 @@ const Dock = () => {
 
         const center = iconLeft - left + width / 2;
         const distance = Math.abs(mouseX - center);
-
+        
         // courbe d'intensité
         const intensity = Math.exp(-(distance ** 2.5) / 18000);
 
@@ -52,11 +56,26 @@ const Dock = () => {
     dock.addEventListener("mousemove", handleMouseMove);
     dock.addEventListener("mouseleave", resetIcons);
 
+    
     return () => {
       dock.removeEventListener("mousemove", handleMouseMove);
       dock.removeEventListener("mouseleave", resetIcons);
     };
   }, []);
+
+  const toggleApp = (app) => {
+    if (!app.canOpen) return;
+
+    const window = windows[app.id];
+
+    if (window.isOpen) {
+      closeWindow(app.id);
+    } else {
+      openWindow(app.id);
+    }
+
+    console.log(windows);
+  }
 
   return (
     <section id="dock">
@@ -71,6 +90,8 @@ const Dock = () => {
               data-tooltip-content={name}
               data-tooltip-delay-show={150}
               disabled={!canOpen}
+              onClick={() => toggleApp({ id, canOpen })} 
+              style={{ opacity: canOpen ? 1 : 0.5 }}
             >
               <img
                 src={`/images/${icon}`}
