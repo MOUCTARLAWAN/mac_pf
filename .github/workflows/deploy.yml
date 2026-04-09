@@ -39,11 +39,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: 🚀 Run Docker Compose on Production
-        if: ${{ github.ref == 'refs/heads/main' }}
-        env:
-          APP_ENV: ${{ secrets.APP_ENV }}
+      - name: 🚀 Run Docker
         run: |
-          docker pull mouctarlawan/portfolio-mac
-          docker run -p 3000:3000 -d mouctarlawan/portfolio-mac
-          docker system prune --all --volumes --force
+           docker pull mouctarlawan/portfolio-mac:production
+           docker stop portfolio-mac || true
+           docker rm portfolio-mac || true
+           docker system prune -f
+           docker run -d \
+            --name portfolio-mac \
+            -p 3000:80 \
+            mouctarlawan/portfolio-mac:production
+           docker system prune -f 
