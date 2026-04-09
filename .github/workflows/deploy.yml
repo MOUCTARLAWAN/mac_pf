@@ -1,55 +1,42 @@
-name: 🚀 Deploy
+name: 🚀 Deploy Docker Container
 
 on:
+  workflow_dispatch: # permet de lancer manuellement après build
   push:
     branches:
       - main
-      - dev
-  pull_request:
 
 permissions:
-  actions: write
   contents: read
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Force Node.js 24 pour toutes les actions
+  actions: write
 
 jobs:
-  # ───────────── Build Docker Image ─────────────
-  build:
-    name: 🐳 Build
-    uses: ./.github/workflows/build.yml  # Workflow local, pas besoin de version
-    secrets: inherit
-
-  # ───────────── Deploy ─────────────
   deploy:
-    name: 🚀 Deploy
+    name: Deploy on Server
     runs-on: self-hosted
-    needs: [build]
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
-    env:
-      APP_ENV: ${{ secrets.APP_ENV }}
-    
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🐳 Login to Docker Hub
+      - name: 🧑‍💻 Login to Docker Hub
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: 🚀 Run Docker Compose on Production
+      - name: 🚀 Deploy Docker Container
         run: |
           docker pull mouctarlawan/portfolio-mac:production
 
+          # Stop & remove old container si existant
           docker stop portfolio-mac || true
           docker rm portfolio-mac || true
 
+          # Run nouveau container
           docker run -d \
             --name portfolio-mac \
             -p 3000:80 \
             mouctarlawan/portfolio-mac:production
 
-          docker system prune --all --volumes --force
+          # Nettoyer les images et volumes inutilisés
+          docker system prune -f
