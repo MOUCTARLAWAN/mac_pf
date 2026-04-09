@@ -1,47 +1,49 @@
-name: 🚀 Deploy Docker Container
+name: 🚀 Deploy
 
 on:
-  workflow_dispatch: # permet de lancer manuellement après build
   push:
     branches:
       - main
+      - dev
+  pull_request:
 
 permissions:
-  contents: read
   actions: write
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # Force Node.js 24 pour les actions
 
 jobs:
   build:
     name: 🐳 Build
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build.yml  # Workflow local, pas de version
     secrets: inherit
-  
+
   deploy:
-    name: Deploy on Server
-    runs-on: self-hosted
+    name: 🚀 Deploy
+    runs-on: [self-hosted]
+    needs: [lint, typecheck, build]
+    # only build/deploy main branch on pushes
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+    # env:
+    #   APP_ENV: ${{ secrets.APP_ENV }}
+
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
-      - name: 🧑‍💻 Login to Docker Hub
-        uses: docker/login-action@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: 🚀 Deploy Docker Container
+      - name: 🚀 Run Docker Compose on Production
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          APP_ENV: ${{ secrets.APP_ENV }}
         run: |
-          docker pull mouctarlawan/portfolio-mac:production
-
-          # Stop & remove old container si existant
-          docker stop portfolio-mac || true
-          docker rm portfolio-mac || true
-
-          # Run nouveau container
-          docker run -d \
-            --name portfolio-mac \
-            -p 3000:80 \
-            mouctarlawan/portfolio-mac:production
-
-          # Nettoyer les images et volumes inutilisés
-          docker system prune -f
+          docker pull varkoff/deployed-app:production
+          docker run -p 3000:3000 -d varkoff/deployed-app:production
+          docker system prune --all --volumes --force
