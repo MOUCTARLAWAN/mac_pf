@@ -1,0 +1,9 @@
+services:
+  app:
+    container_name: portfolio-mac
+    image: mouctarlawan/portfolio-mac:production
+    restart: always
+    ports:
+      - "3000:80"
+    environment:
+      - APP_ENV=production
