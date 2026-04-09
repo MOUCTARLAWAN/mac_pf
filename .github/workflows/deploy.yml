@@ -1,10 +1,11 @@
 name: 🚀 Deploy
+
 on:
   push:
     branches:
       - main
       - dev
-  pull_request: {}
+  pull_request:
 
 permissions:
   actions: write
@@ -19,19 +20,13 @@ jobs:
         uses: styfle/cancel-workflow-action@v1
 
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
         run: bun install
-
-      # - name: ⎔ Setup node
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 18
-
-      # - name: 📥 Download deps
-      #   uses: bahmutov/npm-install@v1
 
       - name: 🔬 Lint
         run: bun run lint
@@ -44,41 +39,126 @@ jobs:
         uses: styfle/cancel-workflow-action@0.12.1
 
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
         run: bun install
-
-      # - name: ⎔ Setup node
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 18
-
-      # - name: 📥 Download deps
-      #   uses: bahmutov/npm-install@v1
 
       - name: 🔎 Type check
         run: bun run typecheck
 
   build:
-    name: 🐳 build
-    uses: ./build.yml
+    name: 🐳 Build
+    uses: ./.github/workflows/build.yml@main
     secrets: inherit
+
   deploy:
     name: 🚀 Deploy
-    runs-on: [self-hosted]
+    runs-on: self-hosted
     needs: [lint, typecheck, build]
 
-
-    # only build/deploy main branch on pushes
     if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
-    env:
-      APP_ENV: ${{ secrets.APP_ENV }}
+
     steps:
-      - name: 🚀 Run Docker Compose on Production
-        if: ${{ github.ref == 'refs/heads/main' }}
+      - name: 🚀 Deploy container
         run: |
           docker pull mouctarlawan/portfolio-mac:production
-          docker run -p 3000:3000 -d mouctarlawan/portfolio-mac:production
-          docker system prune --all --volumes --force
+
+          docker stop portfolio-mac || true
+          docker rm portfolio-mac || true
+
+          docker run -d \
+            --name portfolio-mac \
+            -p 3000:80 \
+            mouctarlawan/portfolio-mac:production
+
+          docker system prune -f
+
+
+# name: 🚀 Deploy
+# on:
+#   push:
+#     branches:
+#       - main
+#       - dev
+#   pull_request: {}
+
+# permissions:
+#   actions: write
+#   contents: read
+
+# jobs:
+#   lint:
+#     name: ⬣ ESLint
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 🛑 Cancel Previous Runs
+#         uses: styfle/cancel-workflow-action@v1
+
+#       - name: ⬇️ Checkout repo
+#         uses: actions/checkout@v4.1.1
+#       - name: Setup Bun
+#         uses: oven-sh/setup-bun@v2
+#       - name: Install dependencies
+#         run: bun install
+
+#       # - name: ⎔ Setup node
+#       #   uses: actions/setup-node@v3
+#       #   with:
+#       #     node-version: 18
+
+#       # - name: 📥 Download deps
+#       #   uses: bahmutov/npm-install@v1
+
+#       - name: 🔬 Lint
+#         run: bun run lint
+
+#   typecheck:
+#     name: ʦ TypeScript
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 🛑 Cancel Previous Runs
+#         uses: styfle/cancel-workflow-action@0.12.1
+
+#       - name: ⬇️ Checkout repo
+#         uses: actions/checkout@v4.1.1
+#       - name: Setup Bun
+#         uses: oven-sh/setup-bun@v2
+#       - name: Install dependencies
+#         run: bun install
+
+#       # - name: ⎔ Setup node
+#       #   uses: actions/setup-node@v3
+#       #   with:
+#       #     node-version: 18
+
+#       # - name: 📥 Download deps
+#       #   uses: bahmutov/npm-install@v1
+
+#       - name: 🔎 Type check
+#         run: bun run typecheck
+
+#   build:
+#     name: 🐳 build
+#     uses: ./build.yml
+#     secrets: inherit
+#   deploy:
+#     name: 🚀 Deploy
+#     runs-on: [self-hosted]
+#     needs: [lint, typecheck, build]
+
+
+#     # only build/deploy main branch on pushes
+#     if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+#     env:
+#       APP_ENV: ${{ secrets.APP_ENV }}
+#     steps:
+#       - name: 🚀 Run Docker Compose on Production
+#         if: ${{ github.ref == 'refs/heads/main' }}
+#         run: |
+#           docker pull mouctarlawan/portfolio-mac:production
+#           docker run -p 3000:3000 -d mouctarlawan/portfolio-mac:production
+#           docker system prune --all --volumes --force
