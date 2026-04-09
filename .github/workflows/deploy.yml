@@ -44,6 +44,6 @@ jobs:
         env:
           APP_ENV: ${{ secrets.APP_ENV }}
         run: |
-          docker pull mouctarlawan/portfolio-mac:production
-          docker run -p 3000:3000 -d mouctarlawan/portfolio-mac:production
+          docker pull mouctarlawan/portfolio-mac
+          docker run -p 3000:3000 -d mouctarlawan/portfolio-mac
           docker system prune --all --volumes --force
