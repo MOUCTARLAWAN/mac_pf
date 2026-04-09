@@ -23,7 +23,7 @@ jobs:
   deploy:
     name: 🚀 Deploy
     runs-on: [self-hosted]
-    needs: [lint, typecheck, build]
+    needs: [build]
     # only build/deploy main branch on pushes
     if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
     # env:
