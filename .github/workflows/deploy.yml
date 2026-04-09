@@ -52,7 +52,7 @@ jobs:
 
   build:
     name: 🐳 Build
-    uses: ./.github/workflows/build.yml@main
+    uses: ./build.yml
     secrets: inherit
 
   deploy:
