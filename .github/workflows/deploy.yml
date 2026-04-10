@@ -45,11 +45,11 @@ jobs:
           docker stop portfolio-mac || true
           docker rm portfolio-mac || true
 
-          echo "Run new container"
+          echo "Run new container on port 3001"
           docker run -d \
             --name portfolio-mac \
             --restart always \
-            -p 3001:80 \
+            -p 3000:80 \ # port 3000 is the port we want to run the container on
             mouctarlawan/portfolio-mac:production
 
           echo "Cleanup unused images"
