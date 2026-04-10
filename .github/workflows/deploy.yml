@@ -49,7 +49,7 @@ jobs:
           docker run -d \
             --name portfolio-mac \
             --restart always \
-            -p 3000:80 \
+            -p 3001:80 \
             mouctarlawan/portfolio-mac:production
 
           echo "Cleanup unused images"
