@@ -46,11 +46,7 @@ jobs:
           docker rm portfolio-mac || true
 
           echo "Run new container on port 3001"
-          docker run -d \
-            --name portfolio-mac \
-            --restart always \
-            -p 3001:80 \ 
-            mouctarlawan/portfolio-mac:production
+          docker run -d --name portfolio-mac --restart always -p 3001:80 mouctarlawan/portfolio-mac:production
 
           echo "Cleanup unused images"
           docker image prune -f
