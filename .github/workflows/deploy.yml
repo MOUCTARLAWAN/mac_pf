@@ -49,7 +49,7 @@ jobs:
           docker run -d \
             --name portfolio-mac \
             --restart always \
-            -p 3000:80 \ # port 3000 is the port we want to run the container on
+            -p 3001:80 \ # port 3001 is the port we want to run the container on
             mouctarlawan/portfolio-mac:production
 
           echo "Cleanup unused images"
