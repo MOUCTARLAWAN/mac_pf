@@ -38,7 +38,7 @@ import WindowControls from "#components/WindowControls.jsx";
 
         <div className="footnote">
           <p>
-            <Check size={20} /> 5 of 5 stack loaded successfully (100%)
+            <Check size={20} /> {techStack.length} of {techStack.length} stack loaded successfully (100%)
           </p>
 
           <p className="text-black">

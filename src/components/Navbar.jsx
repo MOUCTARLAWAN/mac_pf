@@ -1,10 +1,18 @@
+import { useState, useEffect } from "react";
 import { navLinks, navIcons } from "#constants/index.js";
 import useWindowStore from "#store/window.js";
 import dayjs from "dayjs";
 
 const Navbar = () => {
+    const { openWindow } = useWindowStore();
+    const [currentTime, setCurrentTime] = useState(() => dayjs());
 
-    const {openWindow} = useWindowStore();
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(dayjs());
+        }, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
   return (
     <nav>
@@ -13,8 +21,8 @@ const Navbar = () => {
             <p className="font-georama text-2xl font-bold">Mouctar Portfolio</p>
 
             <ul>
-                {navLinks.map(( {id,name,type} ) => (
-                    <li key={id} onClick={() => openWindow(type)} >
+                {navLinks.map(({ id, name, type }) => (
+                    <li key={id} onClick={() => type && openWindow(type)}>
                         <p>{name}</p>
                     </li>
                 ))}
@@ -23,16 +31,15 @@ const Navbar = () => {
 
         <div>
             <ul>
-                {navIcons.map(( {id,imag} ) => (
+                {navIcons.map(({ id, imag }) => (
                     <li key={id}>
                         <img src={imag} className="icon-hover" alt={`icon-${id}`}/>
                     </li>
-                    ))}
-                </ul>
+                ))}
+            </ul>
 
-                <time className="font-roboto text-sm">{dayjs().format("ddd MMM D H:mm A")}</time>
-
-            </div>
+            <time className="font-roboto text-sm">{currentTime.format("ddd MMM D H:mm A")}</time>
+        </div>
     </nav>
     );
 };

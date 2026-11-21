@@ -6,7 +6,8 @@ const navLinks = [
     },
     {
         id: 2, 
-        name: "Contact" 
+        name: "Contact",
+        type: "contact"
     },
     {
         id: 3, 

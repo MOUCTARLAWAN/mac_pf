@@ -7,7 +7,8 @@ import { Draggable } from "gsap/Draggable";
 const WindowWrapper = (Component, windowKey) => {
   const Wrapped = (props) => {
     const { focusWindow, windows } = useWindowStore();
-    const { isOpen, zIndex} = windows[windowKey]; // ← ICI on définit bien win
+    const win = windows[windowKey] || { isOpen: false, zIndex: 1000 };
+    const { isOpen, zIndex } = win;
     const ref = useRef(null);
 
 
@@ -27,7 +28,11 @@ const WindowWrapper = (Component, windowKey) => {
       const el = ref.current;
       if(!el) return;
 
-      const [instance] = Draggable.create(el, { onPress: () => focusWindow(windowKey) });
+      const header = el.querySelector("#window-header") || el;
+      const [instance] = Draggable.create(el, {
+        trigger: header,
+        onPress: () => focusWindow(windowKey),
+      });
       return () => instance.kill();
     }, []);
 
